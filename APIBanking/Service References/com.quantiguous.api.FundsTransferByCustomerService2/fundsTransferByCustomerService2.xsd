@@ -1,0 +1,935 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" xmlns:tns="http://www.quantiguous.com/services" elementFormDefault="qualified" targetNamespace="http://www.quantiguous.com/services" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element ibmSchExtn:docRoot="true" name="transfer">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="tns:version" />
+        <xsd:element ref="tns:uniqueRequestNo" />
+        <xsd:element minOccurs="0" maxOccurs="1" ref="tns:appID" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="purposeCode">
+          <xsd:annotation>
+            <xsd:documentation>The purpose of the transaction. Specify a value if it has been mandated for you. If not mandated, you can stil pass a value, but should be one of the configured purpose codes in the bank. 
+This serves as a self declaration on the purpose of the transaction for audit.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="tns:purposeCode">
+              <xsd:pattern value="\w+" />
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element ref="tns:customerID" />
+        <xsd:element ref="tns:debitAccountNo" />
+        <xsd:element ref="tns:beneficiary" />
+        <xsd:element name="transferType" type="tns:transferTypeType">
+          <xsd:annotation>
+            <xsd:documentation>The transfer method / network to be used for the payment. This could be any of NEFT, IMPS, RTGS, ANY. In case ANY is specified, the best suited method for payment is chosen by the service.
+</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="transferCurrencyCode" type="tns:currencyCodeType">
+          <xsd:annotation>
+            <xsd:documentation>The currency of the transferAmount.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="transferAmount" type="tns:positiveFloat">
+          <xsd:annotation>
+            <xsd:documentation>The amount that is transferred.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="remitterToBeneficiaryInfo" type="tns:remitterToBeneficiaryInfoType">
+          <xsd:annotation>
+            <xsd:documentation>
+							A friendly note from the remitter to the
+							beneficiary. This is forwarded to the
+							beneficiaries bank, for certain transation
+							types.
+						</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="transferResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="tns:version" />
+        <xsd:element ref="tns:uniqueResponseNo" />
+        <xsd:element ref="tns:attemptNo" />
+        <xsd:element ref="tns:transferType" />
+        <xsd:element ref="tns:lowBalanceAlert" />
+        <xsd:element ref="tns:transactionStatus" />
+        <xsd:element minOccurs="0" ref="tns:nameWithBeneficiaryBank" />
+        <xsd:element ref="tns:requestReferenceNo" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="payInvoice">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="tns:version" />
+        <xsd:element ref="tns:uniqueRequestNo" />
+        <xsd:element ref="tns:customerID" />
+        <xsd:element ref="tns:debitAccountNo" />
+        <xsd:element ref="tns:supplier" />
+        <xsd:element name="transferType" type="tns:transferTypeType">
+          <xsd:annotation>
+            <xsd:documentation>The transfer method / network to be used for the payment. This could be any of NEFT, IMPS, RTGS, ANY. In case ANY is specified, the best suited method for payment is chosen by the service.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="paymentCurrency" type="tns:currencyCodeType">
+          <xsd:annotation>
+            <xsd:documentation>The currency of the payable amount.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="netPayableAmount" type="tns:positiveFloat">
+          <xsd:annotation>
+            <xsd:documentation>The amount that is transferred.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="invoice" type="tns:invoiceType">
+          <xsd:annotation>
+            <xsd:documentation>The invoice detail, this can be specified if payment voucher communication is configured for the customer. If configured and supplied, payment vouchers with the detail of the invoice are sent to the supplier.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="payInvoiceResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="tns:version" />
+        <xsd:element ref="tns:uniqueResponseNo" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:complexType name="payOrdersType">
+    <xsd:sequence>
+      <xsd:element name="numOrders" type="xsd:string" />
+      <xsd:element name="payOrder" type="tns:payOrderType" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="payOrderType">
+    <xsd:sequence>
+      <xsd:element name="payMode" type="xsd:string" />
+      <xsd:element name="payableAt" type="xsd:string" />
+      <xsd:element name="payAmount" type="xsd:string" />
+      <xsd:element name="payeeName" type="xsd:string" />
+      <xsd:element name="signedBy" type="xsd:string" />
+      <xsd:element name="coSignedBy" type="xsd:string" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="uniqueRequestNo" type="tns:referenceNoType">
+    <xsd:annotation>
+      <xsd:documentation>
+				A unique reference number to be sent by the client
+				application. The API ensures that duplicate requests are
+				rejected. It is the responsibility of the client to
+				ensure that a unique reference is always generated. A
+				UUID may be used if no other mechanism is available.
+			</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="transactionStatus" type="tns:transactionStatusType">
+    <xsd:annotation>
+      <xsd:documentation>
+				The detailed status of the transaction.
+			</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="uniqueResponseNo" type="tns:referenceNoType">
+    <xsd:annotation>
+      <xsd:documentation>
+				A unique reference number that is sent back
+				by the API. This reference number can be
+				used to inquire about the status of a
+				request, and is usually presented on a user
+				interface.. A UUID may be returned if no
+				other mechanism is available.
+			</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:simpleType name="customerIDType">
+    <xsd:annotation>
+      <xsd:documentation>The maximum length is 10 as per backend systems.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="10" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="nameType">
+    <xsd:choice>
+      <xsd:element name="fullName" type="tns:fullNameType">
+        <xsd:annotation>
+          <xsd:documentation>The full name of the individual or the company.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:choice>
+  </xsd:complexType>
+  <xsd:simpleType name="accountNoType">
+    <xsd:annotation>
+      <xsd:documentation>
+				The minimum length of 10 is as per backend systems.
+			</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="10" />
+      <xsd:maxLength value="20" />
+      <xsd:whiteSpace value="collapse" />
+      <xsd:pattern value="\w+" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="beneficiaryAccountNoType">
+    <xsd:annotation>
+      <xsd:documentation>
+				The minimum length of 1 is as per the information shared by bank.
+			</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="34" />
+      <xsd:whiteSpace value="collapse" />
+      <xsd:pattern value="\w+" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="transferTypeType">
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="NEFT" />
+      <xsd:enumeration value="IMPS" />
+      <xsd:enumeration value="RTGS" />
+      <xsd:enumeration value="FT" />
+      <xsd:enumeration value="ANY" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="invoiceAmountType">
+    <xsd:restriction base="xsd:string" />
+  </xsd:simpleType>
+  <xsd:simpleType name="AmountType">
+    <xsd:restriction base="xsd:float" />
+  </xsd:simpleType>
+  <xsd:simpleType name="invoiceNumberType">
+    <xsd:restriction base="xsd:string" />
+  </xsd:simpleType>
+  <xsd:simpleType name="purchaseOrderNumberType">
+    <xsd:restriction base="xsd:string" />
+  </xsd:simpleType>
+  <xsd:element name="version" type="tns:versionType">
+    <xsd:annotation>
+      <xsd:documentation>
+				When sent in the request, this reflects the version that
+				is known to the client. Clients should always send a
+				value that they were developed with. When sent in the
+				reply, this reflects the version that is known to the
+				server. This is updated whenever there is a change in
+				the specification or the behavior of the server. These
+				versions are not required to match, and are to be used
+				to when dealing with compatibility issues.
+			</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="beneficiaryName" type="tns:nameType">
+    <xsd:annotation>
+      <xsd:documentation>
+							The benficiary, to whom the funds will be
+							credited. This name is checked with various
+							lists (such as SDN) for regulartory
+							compliance. In case of a match, the
+							transaction is not accepted unless a
+							verified identity is provided to state the
+							match is indeed false.
+						</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="beneficiaryAccountNo" type="tns:beneficiaryAccountNoType">
+    <xsd:annotation>
+      <xsd:documentation>
+							The beneficiary account number. Funds will
+							be credited to this account. All transfer
+							types require the account number.
+						</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="transferAmount" type="tns:positiveFloat">
+    <xsd:annotation>
+      <xsd:documentation>
+							The transaction amount, represented in the
+							tranaction currency.
+						</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="customerID" type="tns:customerIDType">
+    <xsd:annotation>
+      <xsd:documentation>
+				The unique ID assigned to the customer. This is required to be sent with every request. This is used as an identifier and does not implement security. For authentication, refer the security notes.
+			</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="debitAccountNo" type="tns:accountNoType">
+    <xsd:annotation>
+      <xsd:documentation>
+				The account to be debited for the funds transfer. The customer should have appropriate access (or ownership) to this account. 
+			</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:complexType name="AddressType">
+    <xsd:sequence>
+      <xsd:element name="address1" type="tns:addressLineType">
+        <xsd:annotation>
+          <xsd:documentation>
+						The line 1 of the address.
+					</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" maxOccurs="1" name="address2" type="tns:addressLineType">
+        <xsd:annotation>
+          <xsd:documentation>
+						The line 2 of the address
+					</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" maxOccurs="1" name="address3" type="tns:addressLineType">
+        <xsd:annotation>
+          <xsd:documentation>
+						The line 3 of the address.
+					</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" maxOccurs="1" name="postalCode" type="tns:postalCodeType">
+        <xsd:annotation>
+          <xsd:documentation>
+						The postal code.
+					</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" maxOccurs="1" name="city" type="tns:cityNameType">
+        <xsd:annotation>
+          <xsd:documentation>
+						The city Name.
+					</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" maxOccurs="1" name="stateOrProvince" type="tns:stateOrProvinceNameType">
+        <xsd:annotation>
+          <xsd:documentation>
+						The state/province Name.
+					</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" maxOccurs="1" name="country">
+        <xsd:annotation>
+          <xsd:documentation>The ISO 3166-1 alpha-2 country code (IN = India, US = United Stated of America). Refer http://en.wikipedia.org/wiki/ISO_3166-1</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[A-Z]{2}" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="contactType">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="mobileNo" type="tns:mobileNoType">
+        <xsd:annotation>
+          <xsd:documentation>
+						Mobile number to which transaction status
+						notifications are sent.
+					</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="emailID" type="tns:emailIDType">
+        <xsd:annotation>
+          <xsd:documentation>
+						Mobile number to which transaction status
+						notifications are sent.
+					</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="IFSCType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[A-Z|a-z]{4}0[A-Z|a-z|0-9]{6}" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="MMIDType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[0-9]{7}" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="MobileNoType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[0-9]{10}" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:element name="supplier" type="tns:supplierType">
+    <xsd:annotation>
+      <xsd:documentation>The supplier towards which the transfer is being made. Suppliers can be identified by a pre-maintained code (SupplierManagement is a separate API), or by specifying the complete details (for one off payment / new suppliers)</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:complexType name="supplierType">
+    <xsd:choice>
+      <xsd:element name="supplierCode" type="xsd:token">
+        <xsd:annotation>
+          <xsd:documentation>The code assigned to the supplier by the customer. Suppliers can be pre-maintained with the SupplierManagement API.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="supplierDetail" type="tns:supplierDetailType">
+        <xsd:annotation>
+          <xsd:documentation>For payments to suppliers that are not pre-maintained, the supplier detail needs to be specified.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:choice>
+  </xsd:complexType>
+  <xsd:complexType name="supplierDetailType">
+    <xsd:sequence>
+      <xsd:element name="supplierName" type="tns:nameType">
+        <xsd:annotation>
+          <xsd:documentation>The name of the supplier</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="supplierAddress" type="tns:AddressType">
+        <xsd:annotation>
+          <xsd:documentation>The supplier (billing) address.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="supplierContact" type="tns:contactType">
+        <xsd:annotation>
+          <xsd:documentation>The supplier contact, this includes the phone number and the email address. It is used to send notifications to the suppliers.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="supplierAccountNo" type="tns:accountNoType">
+        <xsd:annotation>
+          <xsd:documentation>Certain payment networks such as NEFT require that the account number and IFSC code to be specified, certain payment networks such as IMPS support an MMID as the account number.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="supplierIFSC" type="tns:IFSCType">
+        <xsd:annotation>
+          <xsd:documentation>Certain payment networks such as NEFT require that the account number and IFSC code to be specified, certain payment networks such as IMPS support an MMID as the account number.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="supplierMobileNo" type="tns:MobileNoType">
+        <xsd:annotation>
+          <xsd:documentation>For networks that support the MMID method of payment, the suppliers mobile number and MMID can be specified, this mobile number can be different than the contact number provided for notifications.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="supplierMMID" type="tns:MMIDType">
+        <xsd:annotation>
+          <xsd:documentation>For networks that support the MMID method of payment, the suppliers mobile number and MMID can be specified.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="invoiceType">
+    <xsd:sequence>
+      <xsd:element name="purchaseOrderNumber" type="tns:purchaseOrderNumberType">
+        <xsd:annotation>
+          <xsd:documentation>The purchase order against which the invoice was created. </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="invoiceNumber" type="tns:invoiceNumberType">
+        <xsd:annotation>
+          <xsd:documentation>The invoice number.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="invoiceDate" type="xsd:date">
+        <xsd:annotation>
+          <xsd:documentation>The invoice date.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="invoiceAmount" type="tns:positiveFloat">
+        <xsd:annotation>
+          <xsd:documentation>The invoiced amount, this is what the supplier asked for.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="passedAmount" type="tns:positiveFloat">
+        <xsd:annotation>
+          <xsd:documentation>The passed Amount, this is what was agreed / approved for payment. This is usually the same as the invoicedAmount, can be less in case of disputes.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="taxesApplied" type="tns:taxesAppliedArray">
+        <xsd:annotation>
+          <xsd:documentation>The applicable taxes that were included in the invoice. Multiple tax items can be specified.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="taxDeductedAtSource" type="tns:taxDeductedAtSourceType">
+        <xsd:annotation>
+          <xsd:documentation>The tax that was deducted at source, the section and rate at which the TDS was deducted can also be specified.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="otherDeductions" type="tns:nonNegativeFloat">
+        <xsd:annotation>
+          <xsd:documentation>Any other deductions that were applied to arrive at the net payable amount.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="taxDeductedAtSourceType">
+    <xsd:sequence>
+      <xsd:element name="sectionCode" type="xsd:token">
+        <xsd:annotation>
+          <xsd:documentation>The tax section under which the TDS was computed and deducted. Section codes are published by regulartory bodies.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="sectionName" type="xsd:token">
+        <xsd:annotation>
+          <xsd:documentation>The tax section under which the TDS was computed and deducted. Section codes are published by regulartory bodies.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="deductionRate" type="tns:positiveFloat">
+        <xsd:annotation>
+          <xsd:documentation>The tax section under which the TDS was computed and deducted. The tax rates are published by regulartory bodies</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="deductedAmount" type="tns:positiveFloat">
+        <xsd:annotation>
+          <xsd:documentation>The amount that was deducted. The tax is computed on the invoiceAmount or passedAmount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="taxesAppliedArray">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" maxOccurs="unbounded" name="taxItem" type="tns:taxAppliedItem">
+        <xsd:annotation>
+          <xsd:documentation>Each individual tax item can be specified.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="taxAppliedItem">
+    <xsd:sequence>
+      <xsd:element name="taxType">
+        <xsd:annotation>
+          <xsd:documentation>The nature of the tax - ST, VAT.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ST" />
+            <xsd:enumeration value="VAT" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="accountingCode" type="xsd:token">
+        <xsd:annotation>
+          <xsd:documentation>The accounting code for the tax that was applied. Accounting codes are published by regualatory bodies.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="accountingName" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>The accounting code for the tax that was applied. Accounting codes are published by regualatory bodies.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="taxRate" type="tns:positiveFloat">
+        <xsd:annotation>
+          <xsd:documentation>The rate at which the tax was computed. Tax rates are published by regualatory bodies.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="taxAmount" type="tns:positiveFloat">
+        <xsd:annotation>
+          <xsd:documentation>The tax amount that was computed and applied.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="beneficiary" type="tns:beneficiaryType" />
+  <xsd:complexType name="beneficiaryType">
+    <xsd:choice>
+      <xsd:element name="beneficiaryCode" type="tns:beneficiaryCodeType">
+        <xsd:annotation>
+          <xsd:documentation>The code assigned to the beneficiary by the customer. Beneficiaries can be pre-maintained with the BeneficiaryManagement API.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="beneficiaryDetail" type="tns:beneficiaryDetailType">
+        <xsd:annotation>
+          <xsd:documentation>For payments to beneficiaries that are not pre-maintained, the beneficiary detail needs to be specified.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:choice>
+  </xsd:complexType>
+  <xsd:complexType name="transactionStatusType">
+    <xsd:sequence>
+      <xsd:element name="statusCode">
+        <xsd:annotation>
+          <xsd:documentation>FAILED: The transaction has failed, it can be attempted again with the same reference number. This can include AML and any other failures. 
+SENT_TO_BENEFICIARY : The transaction has been sent to the beneficiary bank.
+RETURNED_FROM_BENEFICIARY: The transaction has been returned back from the beneficiary bank.
+COMPLETED: The transaction has been confirmed as credited by the beneficiary bank.
+ONHOLD: (Future Use)
+</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:token">
+            <xsd:enumeration value="ONHOLD" />
+            <xsd:enumeration value="SENT_TO_BENEFICIARY" />
+            <xsd:enumeration value="COMPLETED" />
+            <xsd:enumeration value="RETURNED_FROM_BENEFICIARY" />
+            <xsd:enumeration value="FAILED" />
+            <xsd:enumeration value="IN_PROCESS" />
+            <xsd:enumeration value="SCHEDULED_FOR_NEXT_WORKDAY" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="subStatusCode">
+        <xsd:annotation>
+          <xsd:documentation>The detailed error code that was received from the beneficiary bank. This is especially useful for the operations and support staff to know why the transaction FAILED or was RETURNED_FROM_BENEFICIARY. </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1" />
+            <xsd:maxLength value="10" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="bankReferenceNo">
+        <xsd:annotation>
+          <xsd:documentation>The reference number generated by the bank, and passed on to the payment network. This is useful for NEFT and IMPS transactions. It is usually communicated to the beneficiary and can be given to the original remitter.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="0" />
+            <xsd:maxLength value="64" />
+            <xsd:whiteSpace value="collapse" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="beneficiaryReferenceNo">
+        <xsd:annotation>
+          <xsd:documentation>For future use.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="64" />
+            <xsd:whiteSpace value="collapse" />
+            <xsd:pattern value="\w*" />
+            <xsd:minLength value="0" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element minOccurs="0" maxOccurs="1" name="reason">
+        <xsd:annotation>
+          <xsd:documentation>Fault reason if any. To be passed with version 2 only.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string" />
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="beneficiaryCodeType">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="255" />
+      <xsd:pattern value="\w+" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="beneficiaryDetailType">
+    <xsd:sequence>
+      <xsd:element ref="tns:beneficiaryName">
+        <xsd:annotation>
+          <xsd:documentation>The name of the beneficiary</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" maxOccurs="1" name="beneficiaryAddress" type="tns:AddressType">
+        <xsd:annotation>
+          <xsd:documentation>The address of the beneficiary.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="beneficiaryContact" type="tns:contactType">
+        <xsd:annotation>
+          <xsd:documentation>The beneficiary contact, this includes the phone number and the email address. It is used to send notifications to the beneficiaries.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="beneficiaryAccountNo" type="tns:beneficiaryAccountNoType">
+        <xsd:annotation>
+          <xsd:documentation>Certain payment networks such as NEFT require that the account number and IFSC code to be specified, certain payment networks such as IMPS support an MMID as the account number.
+</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="beneficiaryIFSC" type="tns:IFSCType">
+        <xsd:annotation>
+          <xsd:documentation>Certain payment networks such as NEFT require that the account number and IFSC code to be specified, certain payment networks such as IMPS support an MMID as the account number.
+</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" maxOccurs="1" name="beneficiaryMobileNo" type="tns:MobileNoType">
+        <xsd:annotation>
+          <xsd:documentation>For networks that support the MMID method of payment, the suppliers mobile number and MMID can be specified, this mobile number can be different than the contact number provided for notifications.
+</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" maxOccurs="1" name="beneficiaryMMID" type="tns:MMIDType">
+        <xsd:annotation>
+          <xsd:documentation>For networks that support the MMID method of payment, the suppliers mobile number and MMID can be specified.
+</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="attemptNo">
+    <xsd:annotation>
+      <xsd:documentation>The attempt no starts with 1 and is incremented by 1 for every request that is received with the same reference number. This is used to keep uniquely identify a request attempt. Repeated attempts are not allowed once the transaction has been accepted successfuly.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:positiveInteger">
+        <xsd:minInclusive value="1" />
+      </xsd:restriction>
+    </xsd:simpleType>
+  </xsd:element>
+  <xsd:element name="transferType" type="tns:transferTypeType">
+    <xsd:annotation>
+      <xsd:documentation>
+				The type of transfer that was initiated for this request. 
+				Usually this will be the same as what was asked for in the request. 
+				It is different in the following cases: (1) In case the beneficiary if of the bank, then the mode is FT (funds transfer) (2) In case the request was of type ANY, this reflects the method that was chosen.   
+			</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="lowBalanceAlert" type="xsd:boolean">
+    <xsd:annotation>
+      <xsd:documentation>
+				A low balance threshold can be configured for the
+				partners, If the balance in the drawing account drops
+				below this threshold, alerts are sent, to give advance
+				notice to the partner. This is important transactions
+				are rejected the drawing account is not sufficiently
+				funded.
+			</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="requestReferenceNo" type="xsd:string">
+    <xsd:annotation>
+      <xsd:documentation>
+				The value of the field uniqueRequestNo as it comes in the request.
+			</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="nameWithBeneficiaryBank" type="xsd:string">
+    <xsd:annotation>
+      <xsd:documentation>
+				The name as registered with the beneficiary bank.
+			</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="getStatus">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="tns:version" />
+        <xsd:element minOccurs="0" maxOccurs="1" ref="tns:appID" />
+        <xsd:element ref="tns:customerID" />
+        <xsd:element name="requestReferenceNo" type="tns:referenceNoType">
+          <xsd:annotation>
+            <xsd:documentation>
+							The unique reference number that was
+							supplied when the remit operation was
+							called.
+						</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="getStatusResponse">
+    <xsd:annotation>
+      <xsd:documentation>
+				The date on which the transaction was accepted by the
+				service. This is in the timezone of the banks server.
+			</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="tns:version" />
+        <xsd:element name="transferType" type="tns:transferTypeType">
+          <xsd:annotation>
+            <xsd:documentation>
+							The type of transfer that was initiated for this request. 
+							Usually this will be the same as what was asked for in the request. 
+							It is different in the following cases: (1) In case the beneficiary if of the bank, then the mode is FT (funds transfer) (2) In case the request was of type ANY, this reflects the method that was chosen.   
+						</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="reqTransferType" type="tns:transferTypeType">
+          <xsd:annotation>
+            <xsd:documentation>
+							The transfer type that was sent in the request. 
+						</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="transactionDate" type="xsd:dateTime">
+          <xsd:annotation>
+            <xsd:documentation>
+							The date on which the transaction was
+							received by the bank. This is in the time
+							zone of the bank.
+						</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="transferAmount" type="tns:positiveFloat">
+          <xsd:annotation>
+            <xsd:documentation>
+							The transaction amount, represented in the
+							tranaction currency.
+						</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="transferCurrencyCode" type="tns:currencyCodeType">
+          <xsd:annotation>
+            <xsd:documentation>
+							The currency code of the transaction. Only
+							INR transactions are accepted.
+						</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element ref="tns:transactionStatus" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="appID">
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:string">
+        <xsd:minLength value="5" />
+        <xsd:maxLength value="20" />
+      </xsd:restriction>
+    </xsd:simpleType>
+  </xsd:element>
+  <xsd:simpleType name="purposeCode">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="50" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="versionType">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="5" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="referenceNoType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="32" />
+      <xsd:minLength value="1" />
+      <xsd:whiteSpace value="collapse" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="nonNegativeFloat">
+    <xsd:restriction base="xsd:float">
+      <xsd:minInclusive value="0" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="positiveFloat">
+    <xsd:restriction base="xsd:float">
+      <xsd:minExclusive value="0" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="currencyCodeType">
+    <xsd:annotation>
+      <xsd:documentation>ISO 4217</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="INR" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="remitterToBeneficiaryInfoType">
+    <xsd:annotation>
+      <xsd:documentation>
+				The minimum length of 2 is as per bank end systems.
+			</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="2" />
+      <xsd:maxLength value="120" />
+      <xsd:pattern value="(\w|\s|\.|,|-)*" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="mobileNoType">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="7" />
+      <xsd:maxLength value="16" />
+      <xsd:whiteSpace value="collapse" />
+      <xsd:pattern value="\d{7,16}" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="emailIDType">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="3" />
+      <xsd:maxLength value="100" />
+      <xsd:pattern value=".+@.+" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="postalCodeType">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="15" />
+      <xsd:pattern value="(\w|-|)*" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="cityNameType">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="50" />
+      <xsd:pattern value="(&quot;|(|)|:|\?|\{|\}|!|@|#|\|%|!|\w|\.|-| )*" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="stateOrProvinceNameType">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="50" />
+      <xsd:pattern value="(&quot;|(|)|:|\?|\{|\}|!|@|#|\|%|!|\w|\.|-| )*" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="fullNameType">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="35" />
+      <xsd:pattern value="(&quot;|(|)|:|\?|\{|\}|!|@|#|\|%|!|\w|\.|-| )*" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="addressLineType">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="35" />
+      <xsd:pattern value="(&quot;|(|)|:|\?|\{|\}|!|@|#|\|%|!|\w|\.|-| )*" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:element ibmSchExtn:docRoot="true" name="getBalance">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="version" type="tns:versionType" />
+        <xsd:element minOccurs="0" maxOccurs="1" ref="tns:appID" />
+        <xsd:element name="customerID" type="tns:customerIDType" />
+        <xsd:element name="AccountNumber" type="tns:accountNoType">
+          <xsd:annotation>
+            <xsd:documentation>
+      				The account to be debited for the funds transfer.
+      				The customer should have appropriate access (or
+      				ownership) to this account.
+      			</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="getBalanceResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="Version" type="tns:versionType" />
+        <xsd:element name="accountCurrencyCode" type="tns:currencyCodeType">
+          <xsd:annotation>
+            <xsd:documentation>
+							The currency of the funding account.
+						</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="accountBalanceAmount" type="tns:nonNegativeFloat">
+          <xsd:annotation>
+            <xsd:documentation>
+							The balance in the funding account. This is
+							represented in the account currency.
+						</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element ref="tns:lowBalanceAlert" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
