@@ -87,9 +87,9 @@ namespace APIBanking
                     baseURL += ":444";
                 }
 
-                if ( serviceName == "fundsTransferByCustomerService" )
+                if ( serviceName == "fundsTransferByCustomerService2" )
                 {
-                    return new EndpointAddress(baseURL + "/app/uat/fundsTransferByCustomerServiceHttpService");
+                    return new EndpointAddress(baseURL + "/app/uat/ssl/fundsTransferByCustomerSevice2");
                 }
                 else
                 {
