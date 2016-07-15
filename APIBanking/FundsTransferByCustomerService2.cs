@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -64,50 +65,18 @@ namespace APIBanking
                     return response;
                 }
             }
-            catch (TimeoutException e)
+            catch (MessageSecurityException e)
             {
-                message = e.Message;
+                throw new Fault(e);
             }
             catch (FaultException e)
             {
-                Fault fault = new Fault(null, null, null);
-                fault.setCode(e.Code.Name);
-                fault.setSubCode(e.Code.SubCode.Name);
-                fault.setReasonText(e.Reason.ToString());
-                /*faultCode = e.Code.Name;
-                faultSubCode = e.Code.SubCode.Name;
-                reason = e.Reason.ToString();*/
-                /*message = e.Message;
-                MessageFault msgFault = e.CreateMessageFault();
-                if (msgFault.HasDetail)
-                {
-                    message = msgFault.GetReaderAtDetailContents().ReadOuterXml();
-                    XmlReader reader = msgFault.GetReaderAtDetailContents();
-                    if (reader.ReadToFollowing("messageInserts"))
-                    {
-                        message = reader.ReadOuterXml();
-                    }
-                }*/
-                throw fault;
+                throw new Fault(e);
             }
-            
-            catch (CommunicationException e)
-            {
-                message = e.Message;
-                Fault fault = new Fault(null, null, null);
-                fault.setReasonText(message);
-                throw fault;
-            }
-
             catch (Exception e)
             {
-                String msg = e.ToString();
-                Fault fault = new Fault(null, null, null);
-                fault.setReasonText(msg);
-                throw fault;
+                throw new Fault(e);
             }
-            return null;
-            
         }
 
         public static com.quantiguous.api.FundsTransferByCustomerService2.getBalanceResponse getBalance(Environment env, APIBanking.com.quantiguous.api.FundsTransferByCustomerService2.getBalance request)
@@ -137,30 +106,18 @@ namespace APIBanking
                     return response;
                 }
             }
-            catch (TimeoutException e)
+            catch (MessageSecurityException e)
             {
-                message = e.Message;
+                throw new Fault(e);
             }
             catch (FaultException e)
             {
-                Fault fault = new Fault(null, null, null);
-                fault.setCode(e.Code.Name);
-                fault.setSubCode(e.Code.SubCode.Name);
-                fault.setReasonText(e.Reason.ToString());
-                throw fault;
+                throw new Fault(e);
             }
-
-            catch (CommunicationException e)
-            {
-                message = e.Message;
-            }
-
             catch (Exception e)
             {
-                String msg = e.ToString();
+                throw new Fault(e);
             }
-            return null;
-
         }
 
         public static com.quantiguous.api.FundsTransferByCustomerService2.getStatusResponse getStatus(Environment env, APIBanking.com.quantiguous.api.FundsTransferByCustomerService2.getStatus request)
@@ -190,30 +147,18 @@ namespace APIBanking
                     return response;
                 }
             }
-            catch (TimeoutException e)
+            catch (MessageSecurityException e)
             {
-                message = e.Message;
+                throw new Fault(e);
             }
             catch (FaultException e)
             {
-                Fault fault = new Fault(null, null, null);
-                fault.setCode(e.Code.Name);
-                fault.setSubCode(e.Code.SubCode.Name);
-                fault.setReasonText(e.Reason.ToString());
-                throw fault;
+                throw new Fault(e);
             }
-
-            catch (CommunicationException e)
-            {
-                message = e.Message;
-            }
-
             catch (Exception e)
             {
-                String msg = e.ToString();
+                throw new Fault(e);
             }
-            return null;
-
         }
     }
 }
