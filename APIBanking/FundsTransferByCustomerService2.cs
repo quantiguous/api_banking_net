@@ -40,7 +40,6 @@ namespace APIBanking
 
         public static com.quantiguous.api.FundsTransferByCustomerService2.transferResponse transfer(Environment env, APIBanking.com.quantiguous.api.FundsTransferByCustomerService2.transfer request)
         {
-            String message;// faultCode, faultSubCode, reason;
             request.version = VERSION;
             com.quantiguous.api.FundsTransferByCustomerService2.fundsTransferByCustomerService2Client client = createClient(env);
 
@@ -81,7 +80,6 @@ namespace APIBanking
 
         public static com.quantiguous.api.FundsTransferByCustomerService2.getBalanceResponse getBalance(Environment env, APIBanking.com.quantiguous.api.FundsTransferByCustomerService2.getBalance request)
         {
-            String message;// faultCode, faultSubCode, reason;
             request.version = VERSION;
             com.quantiguous.api.FundsTransferByCustomerService2.fundsTransferByCustomerService2Client client = createClient(env);
 
@@ -122,7 +120,6 @@ namespace APIBanking
 
         public static com.quantiguous.api.FundsTransferByCustomerService2.getStatusResponse getStatus(Environment env, APIBanking.com.quantiguous.api.FundsTransferByCustomerService2.getStatus request)
         {
-            String message;// faultCode, faultSubCode, reason;
             request.version = VERSION;
             com.quantiguous.api.FundsTransferByCustomerService2.fundsTransferByCustomerService2Client client = createClient(env);
 
