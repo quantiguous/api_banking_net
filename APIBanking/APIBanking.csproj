@@ -51,6 +51,7 @@
     <Compile Include="CustomTextMessageEncoderFactory.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="Fault.cs" />
+    <Compile Include="FaultCode.cs" />
     <Compile Include="FundsTransferByCustomerService2.cs" />
     <Compile Include="JSONClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

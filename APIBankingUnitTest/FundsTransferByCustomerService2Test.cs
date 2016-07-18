@@ -149,7 +149,7 @@ namespace APIBankingTests
             }
             catch (Fault e)
             {
-                Assert.AreEqual("E403", e.Code);
+                Assert.AreEqual(FaultCode.FT6, e.Code);
                 Console.WriteLine(e.ToString());
             }
         }
@@ -344,7 +344,7 @@ namespace APIBankingTests
             }
             catch (Fault e)
             {
-                Assert.AreEqual("E5025", e.SubCode);
+                Assert.AreEqual(FaultCode.EC1, e.SubCode);
                 Console.WriteLine(e.ToString());
             }
         }
